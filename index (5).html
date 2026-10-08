@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sage Export | Pevonia | Shopify Admin (Concept Mockup)</title>
+<style>
+  :root{
+    --p-bg:#f1f1f1; --p-surface:#ffffff; --p-surface-sub:#fafafa;
+    --p-border:#e3e3e3; --p-border-dark:#8a8a8a;
+    --p-text:#303030; --p-text-sub:#616161; --p-text-dis:#8a8a8a;
+    --p-green:#29845a; --p-green-dark:#1f6a48;
+    --p-primary:#303030; --p-primary-hover:#1a1a1a;
+    --p-blue:#0057d0; --p-blue-bg:#eaf4ff;
+    --p-warn-bg:#fff8e6; --p-warn-border:#ffd979; --p-warn-text:#5e4200;
+    --p-crit-bg:#fff1f0; --p-crit-text:#8e1f0b;
+    --p-success-bg:#e7f6ec; --p-success-text:#0f5132;
+    --radius:12px; --radius-sm:8px;
+    font-size:13px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+    background:var(--p-bg); color:var(--p-text);
+    font-size:13px; line-height:1.5;
+  }
+  /* ===== Shopify Admin frame ===== */
+  .topbar{
+    background:#1a1a1a; color:#e3e3e3; height:56px;
+    display:flex; align-items:center; gap:16px; padding:0 16px;
+    position:sticky; top:0; z-index:50;
+  }
+  .topbar .shopify-logo{display:flex;align-items:center;gap:8px;font-weight:700;color:#fff;font-size:14px}
+  .shopify-bag{width:22px;height:22px;background:#95BF47;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800}
+  .topbar .search{
+    flex:1; max-width:560px; margin:0 auto; background:#303030;
+    border:1px solid #444; border-radius:8px; padding:6px 12px;
+    color:#8a8a8a; font-size:13px; display:flex; align-items:center; gap:8px;
+  }
+  .topbar .store{display:flex;align-items:center;gap:8px;font-size:13px;color:#e3e3e3}
+  .store-avatar{width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,#6b5b95,#b8a9c9);display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:11px}
+  .frame{display:flex;min-height:calc(100vh - 56px)}
+  /* left nav */
+  .nav{
+    width:216px; padding:12px 8px; background:#ebebeb;
+    border-right:1px solid var(--p-border); flex-shrink:0;
+  }
+  .nav a{
+    display:flex; align-items:center; gap:10px; padding:6px 10px;
+    border-radius:8px; color:#4a4a4a; text-decoration:none; font-size:13px;
+    font-weight:500; margin-bottom:1px;
+  }
+  .nav a .ic{width:16px;text-align:center;opacity:.75;font-size:13px}
+  .nav a:hover{background:#e0e0e0}
+  .nav .sub{margin-left:26px;font-size:12px;color:#5c5c5c}
+  .nav .active-app{background:#fff;color:#1a1a1a;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  .nav .section-gap{height:12px}
+  .nav .nav-label{font-size:11px;font-weight:600;color:#8a8a8a;padding:8px 10px 4px;text-transform:uppercase;letter-spacing:.4px}
+  /* main */
+  .main{flex:1;padding:20px 24px 60px;max-width:1060px;margin:0 auto;width:100%}
+  .page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+  .page-head h1{font-size:20px;font-weight:700;letter-spacing:-.2px;display:flex;align-items:center;gap:10px}
+  .app-icon{width:32px;height:32px;border-radius:8px;background:#0a3d2e;color:#7ee2b8;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;letter-spacing:0}
+  .page-head .meta{color:var(--p-text-sub);font-size:12px;margin-top:2px}
+  /* tabs */
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--p-border);margin-bottom:16px}
+  .tab{
+    padding:8px 14px;font-size:13px;font-weight:600;color:var(--p-text-sub);
+    border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;
+    border-radius:8px 8px 0 0;
+  }
+  .tab:hover{background:#e9e9e9;color:var(--p-text)}
+  .tab.active{color:var(--p-text);border-bottom-color:#1a1a1a}
+  .tab .pill{background:var(--p-crit-bg);color:var(--p-crit-text);border-radius:10px;font-size:11px;padding:1px 7px;margin-left:6px;font-weight:700}
+  /* cards */
+  .card{background:var(--p-surface);border:1px solid var(--p-border);border-radius:var(--radius);box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:16px;overflow:hidden}
+  .card-h{padding:14px 16px;border-bottom:1px solid var(--p-border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .card-h h2{font-size:14px;font-weight:650}
+  .card-h .hint{font-size:12px;color:var(--p-text-sub);font-weight:400;margin-top:1px}
+  .card-b{padding:16px}
+  .card-b.tight{padding:0}
+  /* buttons */
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;
+    border-radius:8px;padding:7px 14px;cursor:pointer;border:1px solid var(--p-border-dark);
+    background:linear-gradient(#fff,#f7f7f7);color:var(--p-text);
+    box-shadow:0 1px 0 rgba(0,0,0,.05);
+  }
+  .btn:hover{background:#f2f2f2}
+  .btn.primary{background:#1a1a1a;border-color:#1a1a1a;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+  .btn.primary:hover{background:#000}
+  .btn.sm{padding:4px 10px;font-size:12px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  /* form */
+  label.fl{display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:var(--p-text)}
+  input[type=date],input[type=text],select{
+    font:inherit;padding:7px 10px;border:1px solid var(--p-border-dark);border-radius:8px;
+    background:#fff;color:var(--p-text);width:100%;
+  }
+  input:focus,select:focus{outline:2px solid var(--p-blue);outline-offset:1px}
+  .row{display:flex;gap:16px;flex-wrap:wrap}
+  .col{flex:1;min-width:180px}
+  /* banners */
+  .banner{border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;display:flex;gap:10px;margin-bottom:14px;border:1px solid}
+  .banner.warn{background:var(--p-warn-bg);border-color:var(--p-warn-border);color:var(--p-warn-text)}
+  .banner.ok{background:var(--p-success-bg);border-color:#b7dfc5;color:var(--p-success-text)}
+  .banner.info{background:var(--p-blue-bg);border-color:#bcd9ff;color:#003a8c}
+  .banner b{font-weight:700}
+  .banner .bico{font-size:14px;line-height:1.4}
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--p-border)}
+  .stat{background:#fff;padding:14px 16px}
+  .stat .k{font-size:11px;font-weight:600;color:var(--p-text-sub);text-transform:uppercase;letter-spacing:.4px}
+  .stat .v{font-size:19px;font-weight:700;margin-top:2px;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+  .stat .s{font-size:11px;color:var(--p-text-sub);margin-top:1px}
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{
+    text-align:left;font-size:11px;font-weight:650;color:var(--p-text-sub);
+    text-transform:uppercase;letter-spacing:.4px;padding:9px 14px;
+    border-bottom:1px solid var(--p-border);background:var(--p-surface-sub);white-space:nowrap;
+  }
+  td{padding:9px 14px;border-bottom:1px solid #efefef;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr.clickable:hover td{background:#fafafa;cursor:pointer}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;white-space:nowrap}
+  .tag{display:inline-block;font-size:11px;font-weight:600;border-radius:8px;padding:2px 8px;white-space:nowrap}
+  .tag.ok{background:var(--p-success-bg);color:var(--p-success-text)}
+  .tag.warn{background:var(--p-warn-bg);color:var(--p-warn-text)}
+  .tag.crit{background:var(--p-crit-bg);color:var(--p-crit-text)}
+  .tag.neutral{background:#efefef;color:#555}
+  .tag.blue{background:var(--p-blue-bg);color:#0046a8}
+  .neg{color:#8e1f0b}
+  .footnote{font-size:11.5px;color:var(--p-text-sub);padding:10px 16px;border-top:1px solid var(--p-border);background:var(--p-surface-sub)}
+  /* toggle */
+  .toggle{display:flex;align-items:center;gap:10px;font-size:13px}
+  .switch{position:relative;width:34px;height:20px;flex-shrink:0}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;inset:0;background:#c9c9c9;border-radius:20px;transition:.15s;cursor:pointer}
+  .slider:before{content:"";position:absolute;height:16px;width:16px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .switch input:checked + .slider{background:var(--p-green)}
+  .switch input:checked + .slider:before{transform:translateX(14px)}
+  /* misc */
+  .flexb{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .search-input{max-width:280px}
+  .hidden{display:none}
+  .dl-icon{font-size:13px}
+  .mockup-ribbon{
+    position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;color:#96C5F9;
+    font-size:11.5px;padding:6px 16px;text-align:center;z-index:60;letter-spacing:.3px;
+  }
+  .mockup-ribbon b{color:#fff}
+  .email-preview{
+    background:var(--p-surface-sub);border:1px dashed var(--p-border-dark);border-radius:var(--radius-sm);
+    padding:14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;
+    white-space:pre-wrap;color:#444;margin-top:10px;line-height:1.6;
+  }
+  @media (max-width:860px){
+    .nav{display:none}
+    .main{padding:16px 12px 70px}
+    .stats{grid-template-columns:repeat(2,1fr)}
+  }
+  :focus-visible{outline:2px solid var(--p-blue);outline-offset:2px}
+  input[type=time]{font:inherit;padding:7px 10px;border:1px solid var(--p-border-dark);border-radius:8px;background:#fff;color:var(--p-text);width:100%}
+  .hint-sm{font-size:12px;color:var(--p-text-sub)}
+  .field-err{color:var(--p-crit-text);font-size:12px;margin-top:8px;font-weight:600}
+  .chip{border:1px solid var(--p-border-dark);background:#fff;border-radius:14px;padding:3px 11px;font-size:12px;font-weight:600;cursor:pointer;color:var(--p-text)}
+  .chip:hover{background:#f2f2f2}
+  .chip.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+  .seg{display:inline-flex;border:1px solid var(--p-border-dark);border-radius:8px;overflow:hidden;background:#fff}
+  .seg label{padding:7px 14px;cursor:pointer;font-weight:600;font-size:13px;border-right:1px solid var(--p-border);color:var(--p-text-sub)}
+  .seg label:last-child{border-right:none}
+  .seg input{position:absolute;opacity:0;width:0;height:0}
+  .seg label:has(input:checked){background:#1a1a1a;color:#fff}
+  .seg label:has(input:focus-visible){outline:2px solid var(--p-blue);outline-offset:-2px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;padding:6px;border:1px solid var(--p-border-dark);border-radius:8px;min-height:40px;align-items:center;background:#fff}
+  .chip-r{display:inline-flex;align-items:center;gap:6px;background:#efefef;border-radius:14px;padding:3px 6px 3px 11px;font-size:12.5px}
+  .chip-r button{border:none;background:none;cursor:pointer;font-size:15px;color:#616161;line-height:1;padding:0 3px}
+  .chip-r button:hover{color:#1a1a1a}
+  .chips input[type=text]{border:none;flex:1;min-width:200px;width:auto;padding:4px 6px}
+  .chips input[type=text]:focus{outline:none}
+  .is-off{opacity:.45;pointer-events:none}
+  tr.footer-row td{background:#f6f9ff;border-top:1px dashed #9cc0f5}
+  .card-h .toggle{font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- Shopify top bar -->
+<div class="topbar">
+  <span class="shopify-logo"><span class="shopify-bag">S</span> <span class="hide-sm">shopify</span></span>
+  <div class="search">⌕&nbsp; Search</div>
+  <div class="store"><span class="store-avatar">PV</span> Pevonia</div>
+</div>
+
+<div class="frame">
+  <!-- Left nav -->
+  <nav class="nav" aria-label="Shopify admin navigation">
+    <a href="#"><span class="ic">⌂</span> Home</a>
+    <a href="#"><span class="ic">▤</span> Orders</a>
+    <a href="#"><span class="ic">◈</span> Products</a>
+    <a href="#"><span class="ic">◉</span> Customers</a>
+    <a href="#"><span class="ic">▦</span> Content</a>
+    <a href="#"><span class="ic">↗</span> Marketing</a>
+    <a href="#"><span class="ic">%</span> Discounts</a>
+    <div class="section-gap"></div>
+    <div class="nav-label">Apps</div>
+    <a href="#" class="active-app"><span class="ic">⇩</span> Sage Export</a>
+    <div class="section-gap"></div>
+    <div class="nav-label">Sales channels</div>
+    <a href="#"><span class="ic">◫</span> Online Store</a>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><span class="app-icon">SE</span> Sage Export</h1>
+        <div class="meta">Daily shipment export for Sage 300 · Pevonia US</div>
+      </div>
+      <button class="btn" onclick="alert('Concept only: help docs would open here.')">? Help</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="export" role="tab">Export</button>
+      <button class="tab" data-tab="history" role="tab">Run history</button>
+      <button class="tab" data-tab="uom" role="tab">UOM mapping <span class="pill">7</span></button>
+      <button class="tab" data-tab="settings" role="tab">Settings</button>
+    </div>
+
+    <!-- ================= EXPORT TAB ================= -->
+    <section id="tab-export" class="tabpane">
+
+      <div class="banner warn" id="uomWarn">
+        <span class="bico">▲</span>
+        <div><b>7 SKUs are missing a unit of measure.</b> The export stops and lists these items until each has a UOM, so nothing incomplete reaches Sage. <a href="#" onclick="switchTab('uom');return false" style="color:inherit;font-weight:700">Review in UOM mapping</a> before generating.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div>
+            <h2>Generate export</h2>
+            <div class="hint">Pulls all fulfillments dispatched from the first ship date through the second and builds the Sage Header and Line files. Use the same date in both fields for one day, or different dates for a range.</div>
+          </div>
+        </div>
+        <div class="card-b">
+          <div class="row" style="align-items:flex-end">
+            <div class="col" style="max-width:180px">
+              <label class="fl" for="dateFrom">Ship date from</label>
+              <input type="date" id="dateFrom" value="2026-07-27">
+            </div>
+            <div class="col" style="max-width:180px">
+              <label class="fl" for="dateTo">Ship date to</label>
+              <input type="date" id="dateTo" value="2026-07-27">
+            </div>
+            <div class="col" style="max-width:210px">
+              <label class="fl" for="tranno">Transaction number</label>
+              <input type="text" id="tranno" class="mono" value="SY20260727" readonly title="Prefix + shipment date, prefix set in Settings">
+            </div>
+            <div style="margin-left:auto">
+              <button class="btn primary" id="genBtn" onclick="runExport()">Generate export</button>
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            <span class="hint-sm" style="margin-right:4px">Quick select</span>
+            <button class="chip" data-q="today">Today</button>
+            <button class="chip" data-q="yesterday">Yesterday</button>
+            <button class="chip" data-q="7">Last 7 days</button>
+          </div>
+          <div class="hint-sm" id="rangeNote" style="margin-top:10px">Single day. In the live app both dates default to today; this demo opens on July 27, 2026 to match the sample data.</div>
+          <div class="field-err hidden" id="dateErr">Ship date to must be on or after Ship date from.</div>
+          <div class="toggle" style="margin-top:14px">
+            <label class="switch"><input type="checkbox" id="emailToggle" checked><span class="slider"></span></label>
+            Send confirmation email after generating
+          </div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div id="runResult">
+        <div class="banner ok">
+          <span class="bico">✓</span>
+          <div><b id="resultHead">Export generated for July 27, 2026.</b> <span id="resultBody">168 line items across 134 orders reconciled against 735 dispatched shipment lines. Totals verified: line sum matches header to the penny. Footer line appended to both files.</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <h2 id="runTitle">Run summary: SY20260727</h2>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn sm" onclick="alert('Concept only: the Sage Header file would download.')"><span class="dl-icon">⇩</span> Header file</button>
+              <button class="btn sm" onclick="alert('Concept only: the Sage Line file would download.')"><span class="dl-icon">⇩</span> Line file</button>
+            </div>
+          </div>
+          <div class="card-b tight">
+            <div class="stats">
+              <div class="stat"><div class="k">Net sales (openamt)</div><div class="v">$25,507.70</div><div class="s">Σ extamt, 168 lines</div></div>
+              <div class="stat"><div class="k">Trade discounts</div><div class="v">$5,227.25</div><div class="s">incl. 472 GWP free units</div></div>
+              <div class="stat"><div class="k">Freight</div><div class="v">$265.26</div><div class="s">Σ shipping collected</div></div>
+              <div class="stat"><div class="k">Tax to Sage</div><div class="v">$0.00</div><div class="s">staxamt always 0</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <h2>Line file preview</h2>
+            <div class="hint">Grouped by SKU + per-unit discount · unit price = catalog RRP</div>
+          </div>
+          <div class="card-b tight" style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th><th>SKU (itemid)</th><th>Description</th>
+                  <th class="num">Qty</th><th class="num">Unit price</th>
+                  <th class="num">Ext amt</th><th class="num">Discount</th>
+                  <th>UOM</th><th>Flags</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>1</td><td class="mono">1009-10</td><td>CleanRefresh Foaming Oil Cleanser 5ml</td><td class="num">58</td><td class="num">2.60</td><td class="num">150.80</td><td class="num">150.80</td><td>Each</td><td><span class="tag blue">GWP 100%</span></td></tr>
+                <tr><td>2</td><td class="mono">1009-11</td><td>CleanRefresh Foaming Oil Cleanser 150ml</td><td class="num">1</td><td class="num">56.00</td><td class="num">56.00</td><td class="num">11.20</td><td>Each</td><td><span class="tag neutral">FIRST20</span></td></tr>
+                <tr><td>3</td><td class="mono">1009-11</td><td>CleanRefresh Foaming Oil Cleanser 150ml</td><td class="num">1</td><td class="num">56.00</td><td class="num">56.00</td><td class="num">8.40</td><td>Each</td><td><span class="tag neutral">SAVE15</span></td></tr>
+                <tr><td>4</td><td class="mono">1009-11</td><td>CleanRefresh Foaming Oil Cleanser 150ml</td><td class="num">3</td><td class="num">56.00</td><td class="num">168.00</td><td class="num">0.00</td><td>Each</td><td></td></tr>
+                <tr><td>5</td><td class="mono">1012-11</td><td>Rejuvenating Dry Skin Cream 50g</td><td class="num">1</td><td class="num">81.50</td><td class="num">81.50</td><td class="num">3.54</td><td>Each</td><td></td></tr>
+                <tr><td>6</td><td class="mono">1012-11</td><td>Rejuvenating Dry Skin Cream 50g</td><td class="num">2</td><td class="num">81.50</td><td class="num">163.00</td><td class="num">0.00</td><td>Each</td><td></td></tr>
+                <tr><td>7</td><td class="mono">1012-11</td><td>Rejuvenating Dry Skin Cream 50g</td><td class="num">1</td><td class="num">81.50</td><td class="num">81.50</td><td class="num neg">−3.06</td><td>Each</td><td><span class="tag warn">Neg. disc</span></td></tr>
+                <tr><td>8</td><td class="mono">1015-10</td><td>Vitaminic Concentrate 3ml</td><td class="num">82</td><td class="num">15.60</td><td class="num">1,279.20</td><td class="num">1,279.20</td><td>ea</td><td><span class="tag blue">GWP 100%</span></td></tr>
+                <tr><td>9</td><td class="mono">2012-10</td><td>Power Repair Sample 5ml</td><td class="num">14</td><td class="num">6.00</td><td class="num">84.00</td><td class="num">84.00</td><td style="color:#8e1f0b;font-weight:700">Missing</td><td><span class="tag crit">No UOM</span></td></tr>
+                <tr class="footer-row"><td></td><td colspan="8"><span class="tag blue">Footer line</span>&nbsp; <span class="mono" id="footerPreview">END OF SHOPIFY WEB SALES EXPORT</span></td></tr>
+              </tbody>
+            </table>
+            <div class="footnote" id="lineFoot">Showing 9 of 168 lines plus the fixed footer line · every line carries tranno SY20260727, ship date 07/27/2026, warehouse DA10, status 1, tax class "Taxable - Ret"</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h2>Confirmation email preview</h2><span class="tag ok" id="recipTag">Will send to 1 recipient</span></div>
+          <div class="card-b">
+            <div class="email-preview">Web Sales <span id="emailDate">07/27/2026</span>
+
+SO# <span id="emailSo">SY20260727</span> is ready for processing. $25,507.70 in net
+sales, $265.26 in freight, and $1,842.11 in tax.
+
+There are $5,227.25 discounts/store credits/coupons for the
+following order(s):
+769826993 -> $ 38.80 coupon
+769848733 -> $ 19.40 coupon
+769851985 -> $ 10.00 coupon
+...  (134 orders)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= HISTORY TAB ================= -->
+    <section id="tab-history" class="tabpane hidden">
+      <div class="card">
+        <div class="card-h">
+          <h2>Run history</h2>
+          <div class="hint">Any past date or date range can be regenerated. Files are versioned and nothing is overwritten silently.</div>
+        </div>
+        <div class="card-b tight" style="overflow-x:auto">
+          <table>
+            <thead><tr>
+              <th>Ship date</th><th>Tranno</th><th class="num">Lines</th>
+              <th class="num">Net sales</th><th class="num">Discounts</th><th class="num">Freight</th>
+              <th>Status</th><th>Generated</th><th></th>
+            </tr></thead>
+            <tbody>
+              <tr class="clickable"><td>Jul 31, 2026</td><td class="mono">SY20260731</td><td class="num">96</td><td class="num">$14,882.40</td><td class="num">$2,911.06</td><td class="num">$148.90</td><td><span class="tag ok">Complete</span></td><td>Aug 1, 9:02 AM · auto</td><td><button class="btn sm">⇩</button></td></tr>
+              <tr class="clickable"><td>Jul 30, 2026</td><td class="mono">SY20260730</td><td class="num">121</td><td class="num">$18,204.15</td><td class="num">$3,570.88</td><td class="num">$201.33</td><td><span class="tag ok">Complete</span></td><td>Jul 31, 9:01 AM · auto</td><td><button class="btn sm">⇩</button></td></tr>
+              <tr class="clickable"><td>Jul 29, 2026</td><td class="mono">SY20260729</td><td class="num">139</td><td class="num">$21,378.02</td><td class="num">$4,466.19</td><td class="num">$228.75</td><td><span class="tag warn">Regenerated ×2</span></td><td>Jul 30, 2:14 PM · manual</td><td><button class="btn sm">⇩</button></td></tr>
+              <tr class="clickable"><td>Jul 28, 2026</td><td class="mono">SY20260728</td><td class="num">143</td><td class="num">$22,090.66</td><td class="num">$4,127.53</td><td class="num">$240.18</td><td><span class="tag ok">Complete</span></td><td>Jul 29, 9:00 AM · auto</td><td><button class="btn sm">⇩</button></td></tr>
+              <tr class="clickable"><td>Jul 27, 2026</td><td class="mono">SY20260727</td><td class="num">168</td><td class="num">$25,507.70</td><td class="num">$5,227.25</td><td class="num">$265.26</td><td><span class="tag warn">7 UOM warnings</span></td><td>Jul 28, 9:03 AM · auto</td><td><button class="btn sm">⇩</button></td></tr>
+              <tr class="clickable"><td>Jul 24, 2026</td><td class="mono">SY20260724</td><td class="num">131</td><td class="num">$19,402.18</td><td class="num">$3,911.20</td><td class="num">$223.64</td><td><span class="tag blue">Range run Jul 20 to 24</span></td><td>Jul 25, 11:40 AM · manual · B. Farkas</td><td><button class="btn sm">⇩</button></td></tr>
+              <tr class="clickable"><td>Jul 23, 2026</td><td class="mono">SY20260723</td><td class="num">118</td><td class="num">$17,655.40</td><td class="num">$3,560.75</td><td class="num">$204.10</td><td><span class="tag blue">Range run Jul 20 to 24</span></td><td>Jul 25, 11:40 AM · manual · B. Farkas</td><td><button class="btn sm">⇩</button></td></tr>
+              <tr class="clickable"><td>Jul 22, 2026</td><td class="mono">SY20260722</td><td class="num">127</td><td class="num">$18,940.92</td><td class="num">$3,812.33</td><td class="num">$219.48</td><td><span class="tag blue">Range run Jul 20 to 24</span></td><td>Jul 25, 11:40 AM · manual · B. Farkas</td><td><button class="btn sm">⇩</button></td></tr>
+              <tr class="clickable"><td>Jul 21, 2026</td><td class="mono">SY20260721</td><td class="num">104</td><td class="num">$15,388.07</td><td class="num">$3,102.84</td><td class="num">$178.95</td><td><span class="tag blue">Range run Jul 20 to 24</span></td><td>Jul 25, 11:40 AM · manual · B. Farkas</td><td><button class="btn sm">⇩</button></td></tr>
+              <tr class="clickable"><td>Jul 20, 2026</td><td class="mono">SY20260720</td><td class="num">132</td><td class="num">$19,753.78</td><td class="num">$3,990.78</td><td class="num">$226.24</td><td><span class="tag blue">Range run Jul 20 to 24</span></td><td>Jul 25, 11:40 AM · manual · B. Farkas</td><td><button class="btn sm">⇩</button></td></tr>
+            </tbody>
+          </table>
+          <div class="footnote">Each row is one ship date with its own transaction number · a multi-day range run appears as one row per ship date · <b>auto</b> rows come from the automatic daily export, manual rows record who triggered them</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= UOM TAB ================= -->
+    <section id="tab-uom" class="tabpane hidden">
+      <div class="banner warn">
+        <span class="bico">▲</span>
+        <div><b>7 SKUs have no unit of measure.</b> These appeared in recent fulfillments but are missing from the mapping table. Assign a UOM so Sage imports cleanly.</div>
+      </div>
+      <div class="card">
+        <div class="card-h">
+          <div class="flexb" style="width:100%">
+            <div>
+              <h2>SKU → unit of measure</h2>
+              <div class="hint">312 SKUs mapped · read from your existing UOM metafields in Shopify, with overrides managed here</div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input type="text" class="search-input" placeholder="Search SKU or product…" oninput="filterUom(this.value)">
+              <button class="btn sm" onclick="alert('Concept only: CSV import dialog would open.')">Import CSV</button>
+              <button class="btn sm primary" onclick="alert('Concept only: add mapping form would open.')">Add mapping</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-b tight" style="overflow-x:auto">
+          <table id="uomTable">
+            <thead><tr><th>SKU</th><th>Product</th><th>UOM code</th><th>Status</th><th>Last used</th><th></th></tr></thead>
+            <tbody>
+              <tr><td class="mono">2012-10</td><td>Power Repair Sample 5ml</td><td style="color:#8e1f0b;font-weight:700">Missing</td><td><span class="tag crit">Unmapped</span></td><td>Jul 27, 2026</td><td><button class="btn sm" onclick="this.closest('tr').querySelector('.tag').outerHTML='<span class=\'tag ok\'>Mapped</span>';this.closest('tr').children[2].innerHTML='Each';this.remove();decWarn()">Set UOM</button></td></tr>
+              <tr><td class="mono">7015-55</td><td>Travel Kit Pouch</td><td style="color:#8e1f0b;font-weight:700">Missing</td><td><span class="tag crit">Unmapped</span></td><td>Jul 27, 2026</td><td><button class="btn sm" onclick="this.closest('tr').querySelector('.tag').outerHTML='<span class=\'tag ok\'>Mapped</span>';this.closest('tr').children[2].innerHTML='Each';this.remove();decWarn()">Set UOM</button></td></tr>
+              <tr><td class="mono">1620-11</td><td>Ligne Fondamentale Toner 200ml</td><td style="color:#8e1f0b;font-weight:700">Missing</td><td><span class="tag crit">Unmapped</span></td><td>Jul 27, 2026</td><td><button class="btn sm" onclick="this.closest('tr').querySelector('.tag').outerHTML='<span class=\'tag ok\'>Mapped</span>';this.closest('tr').children[2].innerHTML='Each';this.remove();decWarn()">Set UOM</button></td></tr>
+              <tr><td class="mono">1009-10</td><td>CleanRefresh Foaming Oil Cleanser 5ml</td><td>Each</td><td><span class="tag ok">Mapped</span></td><td>Jul 27, 2026</td><td></td></tr>
+              <tr><td class="mono">1009-11</td><td>CleanRefresh Foaming Oil Cleanser 150ml</td><td>Each</td><td><span class="tag ok">Mapped</span></td><td>Jul 27, 2026</td><td></td></tr>
+              <tr><td class="mono">1012-11</td><td>Rejuvenating Dry Skin Cream 50g</td><td>Each</td><td><span class="tag ok">Mapped</span></td><td>Jul 27, 2026</td><td></td></tr>
+              <tr><td class="mono">1015-10</td><td>Vitaminic Concentrate 3ml</td><td>ea</td><td><span class="tag ok">Mapped</span></td><td>Jul 27, 2026</td><td></td></tr>
+              <tr><td class="mono">1015-11</td><td>Vitaminic Concentrate 15ml</td><td>Each</td><td><span class="tag ok">Mapped</span></td><td>Jul 27, 2026</td><td></td></tr>
+              <tr><td class="mono">2060-10</td><td>Lumafirm Repair Cream 5g</td><td>ea</td><td><span class="tag ok">Mapped</span></td><td>Jul 26, 2026</td><td></td></tr>
+            </tbody>
+          </table>
+          <div class="footnote">New Shopify products are detected automatically and appear here as <b>Unmapped</b> until a UOM is assigned. The daily morning mapping file is no longer needed</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SETTINGS TAB ================= -->
+    <section id="tab-settings" class="tabpane hidden">
+      <div class="banner info">
+        <span class="bico">ⓘ</span>
+        <div>Every value Sage expects as a constant lives here. Nothing is hardcoded, so accounting can adjust without a developer.</div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>Sage constants</h2></div>
+        <div class="card-b">
+          <div class="row">
+            <div class="col"><label class="fl">Transaction prefix</label><input type="text" class="mono" id="prefix" value="SY"></div>
+            <div class="col"><label class="fl">Customer ID (custid)</label><input type="text" class="mono" value="Shopify"></div>
+            <div class="col"><label class="fl">Warehouse</label><input type="text" class="mono" value="DA10"></div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <div class="col"><label class="fl">Ship method</label><input type="text" class="mono" value="UPS"></div>
+            <div class="col"><label class="fl">Payment terms</label><input type="text" class="mono" value="Credit Card"></div>
+            <div class="col"><label class="fl">Salesperson ID</label><input type="text" class="mono" value="HS-US3"></div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <div class="col"><label class="fl">Currency</label><input type="text" class="mono" value="USD"></div>
+            <div class="col"><label class="fl">Tax class</label><input type="text" class="mono" value="Taxable - Ret"></div>
+            <div class="col"><label class="fl">Default UOM for new SKUs</label>
+              <select><option>Each</option><option>ea</option><option>None (flag for review)</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h">
+          <div>
+            <h2>Export file footer</h2>
+            <div class="hint">A fixed line written once at the very bottom of each file, after all SKU lines. It is not calculated and not stored per order.</div>
+          </div>
+        </div>
+        <div class="card-b">
+          <label class="fl" for="footerText">Footer text</label>
+          <input type="text" id="footerText" class="mono" value="END OF SHOPIFY WEB SALES EXPORT">
+          <div class="hint-sm" style="margin-top:6px">Placeholder text. Final wording to be supplied by Pevonia.</div>
+          <div style="display:flex;gap:22px;flex-wrap:wrap;margin-top:12px">
+            <div class="toggle"><label class="switch"><input type="checkbox" id="footHeader" checked><span class="slider"></span></label> Append to Header file</div>
+            <div class="toggle"><label class="switch"><input type="checkbox" id="footLine" checked><span class="slider"></span></label> Append to Line file</div>
+          </div>
+          <div class="email-preview" id="footerSample"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div>
+            <h2>Automatic daily export</h2>
+            <div class="hint">Manual exports from the Export tab are always available, whether this is on or off.</div>
+          </div>
+          <div class="toggle"><label class="switch"><input type="checkbox" id="autoToggle" checked><span class="slider"></span></label> <span id="autoLabel">On</span></div>
+        </div>
+        <div class="card-b">
+          <div id="schedFields">
+            <div class="row" style="align-items:flex-end">
+              <div class="col" style="max-width:200px">
+                <label class="fl" for="runTime">Run time (Eastern Time)</label>
+                <input type="time" id="runTime" value="09:00" step="900">
+              </div>
+              <div class="col">
+                <label class="fl" id="procLabel">Data to process</label>
+                <div class="seg" role="radiogroup" aria-labelledby="procLabel">
+                  <label><input type="radio" name="procDay" value="yesterday" checked><span>Yesterday's shipments</span></label>
+                  <label><input type="radio" name="procDay" value="today"><span>Today's shipments</span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="banner info" id="schedSummary" style="margin:14px 0 0"></div>
+          <div class="banner warn hidden" id="schedWarn" style="margin:10px 0 0"><span class="bico">▲</span><div>This run is set before Pevonia's 4:00 PM ET shipping cutoff, so shipments dispatched later that day will be missed. Choose a later time or process yesterday's shipments.</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div>
+            <h2>Confirmation emails</h2>
+            <div class="hint">Sent after every run, automatic or manual, with the run summary and coupon breakdown.</div>
+          </div>
+          <div class="toggle"><label class="switch"><input type="checkbox" id="emailAuto" checked><span class="slider"></span></label> <span id="emailLabel">On</span></div>
+        </div>
+        <div class="card-b" id="emailFields">
+          <label class="fl" for="recipInput">Email recipients</label>
+          <div class="chips" id="chips" onclick="document.getElementById('recipInput').focus()">
+            <input type="text" id="recipInput" placeholder="Add an email and press Enter" aria-label="Add email recipient">
+          </div>
+          <div class="field-err hidden" id="recipErr"></div>
+          <div class="hint-sm" style="margin-top:6px">Pevonia IT can manage a distribution group behind a single address, or list people individually.</div>
+        </div>
+      </div>
+      <div style="text-align:right;display:flex;gap:12px;justify-content:flex-end;align-items:center"><span class="hint-sm hidden" id="savedMsg">Settings saved (concept only)</span><button class="btn primary" onclick="saveSettings()">Save settings</button></div>
+    </section>
+
+  </main>
+</div>
+
+<div class="mockup-ribbon"><b>IT-Geeks</b> · Concept mockup for Pevonia · Shopify to Sage 300 Daily Export · Revised Oct 8, 2026: date range, file footer line, schedule and email controls · itgeeks.com</div>
+
+<script>
+  function switchTab(name){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+    document.querySelectorAll('.tabpane').forEach(p=>p.classList.add('hidden'));
+    document.getElementById('tab-'+name).classList.remove('hidden');
+  }
+  document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
+
+  const $=id=>document.getElementById(id);
+  const pad=n=>String(n).padStart(2,'0');
+  const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  const asDate=s=>new Date(s+'T12:00:00');
+  const longD=s=>asDate(s).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const shortD=s=>asDate(s).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const usD=s=>{const p=s.split('-');return p[1]+'/'+p[2]+'/'+p[0]};
+  const dayCount=(a,b)=>Math.round((asDate(b)-asDate(a))/864e5)+1;
+  const prefix=()=>($('prefix').value||'SY').trim();
+
+  function rangeOk(){const f=$('dateFrom').value,t=$('dateTo').value;return f&&t&&t>=f}
+  function syncDates(){
+    const f=$('dateFrom').value,t=$('dateTo').value,ok=rangeOk();
+    $('dateErr').classList.toggle('hidden',ok);
+    $('genBtn').disabled=!ok;
+    if(!ok){$('rangeNote').textContent='';return}
+    const n=dayCount(f,t),p=prefix();
+    $('tranno').value=n===1?p+f.replace(/-/g,''):p+f.replace(/-/g,'')+' +'+(n-1);
+    $('rangeNote').textContent=n===1
+      ?'Single day. In the live app both dates default to today; this demo opens on July 27, 2026 to match the sample data.'
+      :'Multi-day run covering '+n+' ship dates. Each ship date keeps its own header record and transaction number ('+p+f.replace(/-/g,'')+' to '+p+t.replace(/-/g,'')+'), delivered in one Header file and one Line file.';
+  }
+  ['dateFrom','dateTo'].forEach(id=>$(id).addEventListener('change',()=>{document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));syncDates()}));
+  document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+    const now=new Date(),y=new Date(now);y.setDate(now.getDate()-1);
+    const w=new Date(now);w.setDate(now.getDate()-6);
+    const q=c.dataset.q;
+    $('dateFrom').value=iso(q==='today'?now:q==='yesterday'?y:w);
+    $('dateTo').value=iso(q==='yesterday'?y:now);
+    document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));
+    syncDates();
+  }));
+
+  function runExport(){
+    if(!rangeOk())return;
+    const f=$('dateFrom').value,t=$('dateTo').value,n=dayCount(f,t),p=prefix(),tr=p+f.replace(/-/g,'');
+    $('resultHead').textContent=n===1?'Export generated for '+longD(f)+'.':'Export generated for '+shortD(f)+' to '+longD(t)+' ('+n+' ship dates).';
+    $('resultBody').textContent=(n===1?'':'Figures below show the July 27 sample day. ')+'168 line items across 134 orders reconciled against 735 dispatched shipment lines. Totals verified: line sum matches header to the penny. '+footerSummary();
+    $('runTitle').textContent='Run summary: '+(n===1?tr:tr+' to '+p+t.replace(/-/g,''));
+    $('lineFoot').textContent='Showing 9 of 168 lines plus the fixed footer line · every line carries its ship date transaction number ('+tr+(n>1?' onward':'')+'), ship date '+usD(f)+(n>1?' to '+usD(t):'')+', warehouse DA10, status 1, tax class "Taxable - Ret"';
+    $('emailSo').textContent=n===1?tr:tr+' to '+p+t.replace(/-/g,'');
+    $('emailDate').textContent=n===1?usD(f):usD(f)+' to '+usD(t);
+    updateRecipTag();
+    const r=$('runResult');
+    r.style.transition='none';r.style.opacity=0;
+    setTimeout(()=>{r.style.transition='opacity .35s';r.style.opacity=1;},150);
+    r.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  /* footer line */
+  function footerSummary(){
+    const h=$('footHeader').checked,l=$('footLine').checked;
+    if(h&&l)return 'Footer line appended to both files.';
+    if(h)return 'Footer line appended to the Header file.';
+    if(l)return 'Footer line appended to the Line file.';
+    return 'No footer line appended.';
+  }
+  function syncFooter(){
+    const txt=$('footerText').value||'(empty)';
+    $('footerPreview').textContent=txt;
+    document.querySelector('tr.footer-row').style.display=$('footLine').checked?'':'none';
+    $('footerSample').textContent='Last lines of the Line file\n\n...\n167  1015-10  Vitaminic Concentrate 3ml   82  15.60  1279.20  ea\n168  2012-10  Power Repair Sample 5ml     14   6.00    84.00\n'+($('footLine').checked?txt:'(no footer line on this file)');
+  }
+  ['footerText','footHeader','footLine'].forEach(id=>$(id).addEventListener('input',syncFooter));
+  ['footHeader','footLine'].forEach(id=>$(id).addEventListener('change',syncFooter));
+
+  /* schedule */
+  function t12(v){if(!v)return'';let[h,m]=v.split(':').map(Number);const ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+pad(m)+' '+ap}
+  function syncSched(){
+    const on=$('autoToggle').checked,v=$('runTime').value,mode=document.querySelector('input[name=procDay]:checked').value;
+    $('autoLabel').textContent=on?'On':'Off';
+    $('schedFields').classList.toggle('is-off',!on);
+    $('runTime').disabled=!on;document.querySelectorAll('input[name=procDay]').forEach(r=>r.disabled=!on);
+    const s=$('schedSummary');
+    if(!on){s.innerHTML='<span class="bico">ⓘ</span><div><b>Automatic export is off.</b> Generate files manually from the Export tab whenever needed.</div>';$('schedWarn').classList.add('hidden');return}
+    s.innerHTML=mode==='yesterday'
+      ?'<span class="bico">ⓘ</span><div><b>Runs every day at '+t12(v)+' ET</b> and exports the previous day\'s shipments. Example: the July 28 run exports shipments dispatched on July 27.</div>'
+      :'<span class="bico">ⓘ</span><div><b>Runs every day at '+t12(v)+' ET</b> and exports that same day\'s shipments. Example: the July 27 run exports shipments dispatched on July 27.</div>';
+    const hr=v?Number(v.split(':')[0]):0;
+    $('schedWarn').classList.toggle('hidden',!(mode==='today'&&hr<16));
+  }
+  $('autoToggle').addEventListener('change',syncSched);
+  $('runTime').addEventListener('input',syncSched);
+  document.querySelectorAll('input[name=procDay]').forEach(r=>r.addEventListener('change',syncSched));
+
+  /* email recipients */
+  let recips=['Shopify2Sage@pevonia.com'];
+  const emailRe=/^[^\s@,]+@[^\s@,]+\.[^\s@,]+$/;
+  function renderChips(){
+    const box=$('chips'),inp=$('recipInput');
+    box.querySelectorAll('.chip-r').forEach(c=>c.remove());
+    recips.forEach((e,i)=>{
+      const c=document.createElement('span');c.className='chip-r';c.textContent=e;
+      const b=document.createElement('button');b.type='button';b.textContent='×';b.setAttribute('aria-label','Remove '+e);
+      b.onclick=ev=>{ev.stopPropagation();recips.splice(i,1);renderChips()};
+      c.appendChild(b);box.insertBefore(c,inp);
+    });
+    updateRecipTag();
+  }
+  function addRecip(){
+    const inp=$('recipInput'),v=inp.value.trim().replace(/,$/,''),err=$('recipErr');
+    if(!v)return;
+    if(!emailRe.test(v)){err.textContent='"'+v+'" is not a valid email address.';err.classList.remove('hidden');return}
+    err.classList.add('hidden');
+    if(!recips.some(r=>r.toLowerCase()===v.toLowerCase()))recips.push(v);
+    inp.value='';renderChips();
+  }
+  $('recipInput').addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===','){e.preventDefault();addRecip()}
+    else if(e.key==='Backspace'&&!e.target.value&&recips.length){recips.pop();renderChips()}
+  });
+  $('recipInput').addEventListener('blur',addRecip);
+  function syncEmail(){
+    const on=$('emailAuto').checked;
+    $('emailLabel').textContent=on?'On':'Off';
+    $('emailFields').classList.toggle('is-off',!on);
+    $('recipInput').disabled=!on;
+    updateRecipTag();
+  }
+  $('emailAuto').addEventListener('change',syncEmail);
+  $('emailToggle').addEventListener('change',updateRecipTag);
+  function updateRecipTag(){
+    const tag=$('recipTag'),n=recips.length;
+    if(!$('emailAuto').checked||!$('emailToggle').checked){tag.className='tag neutral';tag.textContent='Email turned off for this run';return}
+    if(!n){tag.className='tag warn';tag.textContent='No recipients set';return}
+    tag.className='tag ok';tag.textContent='Will send to '+n+' recipient'+(n>1?'s':'');
+  }
+  function saveSettings(){
+    const m=$('savedMsg');m.classList.remove('hidden');
+    syncDates();setTimeout(()=>m.classList.add('hidden'),2500);
+  }
+  $('prefix').addEventListener('input',syncDates);
+
+  syncDates();syncFooter();syncSched();renderChips();syncEmail();
+
+  let warnCount=7;
+  function decWarn(){
+    warnCount--;
+    document.querySelectorAll('.pill').forEach(p=>p.textContent=warnCount);
+    const b=document.getElementById('uomWarn');
+    if(warnCount<=4){ /* keep demo simple */ }
+    b.querySelector('b').textContent=warnCount+' SKUs are missing a unit of measure.';
+    document.querySelector('#tab-uom .banner b').textContent=warnCount+' SKUs have no unit of measure.';
+  }
+  function filterUom(q){
+    q=q.toLowerCase();
+    document.querySelectorAll('#uomTable tbody tr').forEach(tr=>{
+      tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none';
+    });
+  }
+</script>
+</body>
+</html>
